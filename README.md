@@ -7,7 +7,7 @@ An end-to-end machine learning project that predicts which telecom customers are
 
 ## Key results
 
-- **Data:** IBM Telco Customer Churn dataset, 7,043 customers and 20 features, with a 26.5% churn rate
+- **Data:** IBM Telco Customer Churn dataset, 7,043 customers and 19 features, with a 26.5% churn rate
 - **Model:** gradient boosting reaches about **0.84 ROC-AUC** on held-out test data, compared against a logistic regression baseline
 - **Biggest churn drivers:** month-to-month contracts, short tenure, and no online security or tech support
 - **Business impact:** under stated assumptions, targeting the top 29% of customers by risk gives about **$8,750 net benefit per 1,000 customers**, while contacting everyone loses money
