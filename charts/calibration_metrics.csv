@@ -1,0 +1,4 @@
+model,roc_auc,brier,log_loss,ece
+Uncalibrated,0.8463,0.1353,0.415,0.0182
+Sigmoid (Platt),0.8482,0.1344,0.413,0.0222
+Isotonic,0.8478,0.1347,0.4135,0.0238
