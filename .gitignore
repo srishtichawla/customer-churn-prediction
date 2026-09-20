@@ -5,3 +5,4 @@ __pycache__/
 !charts/sensitivity.csv
 !charts/model_comparison.csv
 !charts/calibration_metrics.csv
+!streamlit_app/telco_clean.csv
