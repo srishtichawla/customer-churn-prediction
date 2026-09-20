@@ -1,14 +1,17 @@
-
 # Customer Churn Prediction
 
 An end-to-end machine learning project that predicts which telecom customers are likely to cancel, explains *why*, and turns the predictions into a cost-based retention strategy.
 
-**Tech stack:** Python, pandas, scikit-learn, SHAP, matplotlib
+**[Live demo](https://customer-churn-prediction-hkedx4enxadhcr5uyxsmbl.streamlit.app/)**: enter a customer's details and see their churn risk, the main reasons, and whether a retention offer is worth it. (Free hosting, so the first load after a quiet period can take about 30 seconds.)
+
+**Tech stack:** Python, pandas, scikit-learn, SHAP, matplotlib, Streamlit
 
 ## Key results
 
 - **Data:** IBM Telco Customer Churn dataset, 7,043 customers and 19 features, with a 26.5% churn rate
-- **Model:** gradient boosting reaches about **0.84 ROC-AUC** on held-out test data, compared against a logistic regression baseline
+- **Model:** tuned gradient boosting reaches about **0.85 ROC-AUC** (0.850 in 5-fold cross-validation, 0.847 on a held-out test set)
+- **Model comparison:** logistic regression, random forest, and gradient boosting were compared with cross-validation. The gains from tuning were modest, and a simple logistic regression baseline came close (0.842 test AUC)
+- **Calibration:** predicted probabilities were checked with reliability diagrams and Brier score. The model was already well calibrated (calibration error about 0.016), so scores can be used directly as probabilities
 - **Biggest churn drivers:** month-to-month contracts, short tenure, and no online security or tech support
 - **Business impact:** under stated assumptions, targeting the top 29% of customers by risk gives about **$8,750 net benefit per 1,000 customers**, while contacting everyone loses money
 
@@ -25,17 +28,38 @@ An end-to-end machine learning project that predicts which telecom customers are
 
 ![Churn rate by segment](charts/02_churn_by_segment.png)
 
+## Model comparison and tuning
+
+Four models were compared with 5-fold cross-validation on the training set, and scored once on a held-out test set. Gradient boosting was tuned with a randomized search over 30 hyperparameter combinations.
+
+| Model | CV ROC-AUC | Test ROC-AUC |
+|---|---|---|
+| Logistic regression | 0.846 | 0.842 |
+| Random forest | 0.845 | 0.842 |
+| Gradient boosting (default) | 0.838 | 0.835 |
+| Gradient boosting (tuned) | 0.850 | 0.847 |
+
+The differences between the top models are within the fold-to-fold variation, so the simple interpretable baseline is nearly as good.
+
+![Model comparison](charts/11_model_comparison.png)
+
 ## Explaining the model with SHAP
 
 SHAP values show how each feature pushes a customer's churn risk up or down.
 
 ![SHAP summary](charts/06_shap_summary.png)
 
+## Probability calibration
+
+A churn score is only useful for money decisions if it behaves like a real probability. The reliability diagram shows that customers scored around 30% churn about 30% of the time, and sigmoid and isotonic calibration made almost no difference.
+
+![Calibration](charts/13_calibration.png)
+
 ## Business impact
 
 A model is only useful if it changes a decision. I chose the risk cutoff on a separate validation set, then measured results on a held-out test set.
 
-**Assumptions (illustrative, adjustable from the command line):** $50 per retention offer, 30% of contacted churners saved, 12 months of revenue at a 50% margin.
+**Assumptions (illustrative, adjustable from the command line and in the live demo):** $50 per retention offer, 30% of contacted churners saved, 12 months of revenue at a 50% margin.
 
 ![Profit curve](charts/09_profit_curve.png)
 ![Strategy comparison](charts/10_strategy_comparison.png)
@@ -54,7 +78,17 @@ pip install -r requirements.txt
 python prepare_telco.py
 python churn_model.py --csv telco_clean.csv --target Churn --id customerID
 python churn_analysis.py --csv telco_clean.csv --target Churn --id customerID
+python churn_tuning.py --csv telco_clean.csv --target Churn --id customerID
+python churn_calibration.py --csv telco_clean.csv --target Churn --id customerID
 python churn_business_impact.py --csv telco_clean.csv --target Churn --id customerID
+```
+
+To run the demo app locally:
+
+```
+pip install streamlit
+cd streamlit_app
+streamlit run app.py
 ```
 
 ## Project structure
@@ -62,16 +96,20 @@ python churn_business_impact.py --csv telco_clean.csv --target Churn --id custom
 | File | Purpose |
 |---|---|
 | `prepare_telco.py` | Downloads and cleans the dataset |
-| `churn_model.py` | Trains and compares models, scores customers |
+| `churn_model.py` | Trains a baseline and a gradient boosting model, scores customers |
 | `churn_analysis.py` | Exploratory charts and SHAP explainability |
+| `churn_tuning.py` | Cross-validation, hyperparameter tuning, model comparison |
+| `churn_calibration.py` | Calibration analysis and expected-profit targeting |
 | `churn_business_impact.py` | Cost-based targeting and net benefit analysis |
-| `charts/` | Generated figures |
+| `streamlit_app/` | Interactive demo app |
+| `charts/` | Generated figures and result tables |
 
 ## Limitations
 
 - The dollar figures rest on assumed costs and save rates, not real company data.
 - The dataset has no dates, so the model was tested on a random split rather than on future customers.
-- Models use fixed hyperparameters and were not extensively tuned.
+- The data has no record of who received retention offers, so the model predicts who is likely to churn, not who would respond to an offer (uplift modeling would need that).
+- The demo app's "main reasons" are a simple what-if approximation, not full SHAP values.
 
 ## Data source
 
