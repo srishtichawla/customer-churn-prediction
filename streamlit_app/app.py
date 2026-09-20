@@ -162,11 +162,11 @@ with right:
     expected = p * success * value
     st.markdown("**Retention decision**")
     if expected >= cost:
-        st.success(f"Contact this customer. Expected saved value ${expected:,.0f} "
-                   f"vs. offer cost ${cost:,.0f} (net about ${expected - cost:,.0f}).")
+        st.success(f"Contact this customer. Expected saved value \\${expected:,.0f} "
+                   f"vs. offer cost \\${cost:,.0f} (net about \\${expected - cost:,.0f}).")
     else:
-        st.info(f"Don't offer a discount. Expected saved value ${expected:,.0f} "
-                f"is below the ${cost:,.0f} offer cost.")
+        st.info(f"Don't offer a discount. Expected saved value \\${expected:,.0f} "
+                f"is below the \\${cost:,.0f} offer cost.")
     st.caption("Rule: contact if churn probability x offer success rate x value of the "
                "customer is at least the offer cost.")
 
