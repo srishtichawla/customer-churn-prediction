@@ -1,4 +1,4 @@
-# customer-churn-prediction
+
 # Customer Churn Prediction
 
 An end-to-end machine learning project that predicts which telecom customers are likely to cancel, explains *why*, and turns the predictions into a cost-based retention strategy.
