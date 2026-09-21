@@ -4,6 +4,8 @@ An end-to-end machine learning project that predicts which telecom customers are
 
 **[Live demo](https://customer-churn-prediction-hkedx4enxadhcr5uyxsmbl.streamlit.app/)**: enter a customer's details and see their churn risk, the main reasons, and whether a retention offer is worth it. (Free hosting, so the first load after a quiet period can take about 30 seconds.)
 
+**[Analysis notebook](churn_analysis_notebook.ipynb)**: a narrated walkthrough of the whole project, with charts and outputs.
+
 **Tech stack:** Python, pandas, scikit-learn, SHAP, matplotlib, Streamlit
 
 ## Key results
@@ -11,7 +13,7 @@ An end-to-end machine learning project that predicts which telecom customers are
 - **Data:** IBM Telco Customer Churn dataset, 7,043 customers and 19 features, with a 26.5% churn rate
 - **Model:** tuned gradient boosting reaches about **0.85 ROC-AUC** (0.850 in 5-fold cross-validation, 0.847 on a held-out test set)
 - **Model comparison:** logistic regression, random forest, and gradient boosting were compared with cross-validation. The gains from tuning were modest, and a simple logistic regression baseline came close (0.842 test AUC)
-- **Calibration:** predicted probabilities were checked with reliability diagrams and Brier score. The model was already well calibrated (calibration error about 0.016), so scores can be used directly as probabilities
+- **Calibration:** predicted probabilities were checked with reliability diagrams and Brier score. The model was already well calibrated (calibration error about 0.02), so scores can be used directly as probabilities
 - **Biggest churn drivers:** month-to-month contracts, short tenure, and no online security or tech support
 - **Business impact:** under stated assumptions, targeting the top 29% of customers by risk gives about **$8,750 net benefit per 1,000 customers**, while contacting everyone loses money
 
@@ -91,6 +93,13 @@ cd streamlit_app
 streamlit run app.py
 ```
 
+To run the notebook yourself:
+
+```
+pip install jupyter
+jupyter notebook churn_analysis_notebook.ipynb
+```
+
 ## Project structure
 
 | File | Purpose |
@@ -101,6 +110,7 @@ streamlit run app.py
 | `churn_tuning.py` | Cross-validation, hyperparameter tuning, model comparison |
 | `churn_calibration.py` | Calibration analysis and expected-profit targeting |
 | `churn_business_impact.py` | Cost-based targeting and net benefit analysis |
+| `churn_analysis_notebook.ipynb` | Narrated walkthrough of the full analysis with outputs |
 | `streamlit_app/` | Interactive demo app |
 | `charts/` | Generated figures and result tables |
 
@@ -110,6 +120,7 @@ streamlit run app.py
 - The dataset has no dates, so the model was tested on a random split rather than on future customers.
 - The data has no record of who received retention offers, so the model predicts who is likely to churn, not who would respond to an offer (uplift modeling would need that).
 - The demo app's "main reasons" are a simple what-if approximation, not full SHAP values.
+- Results can differ slightly in the third decimal between runs and library versions.
 
 ## Data source
 
